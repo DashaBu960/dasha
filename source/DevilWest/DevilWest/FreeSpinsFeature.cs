@@ -118,7 +118,7 @@ namespace DevilWest
             GenerateNewMatrix(CurrentFSReels);
             SetInnersSymbolsDuringFS();
             RealizeInnerSymbols();
-            RealizeMultiplierMatrix();
+          //  RealizeMultiplierMatrix();
             int paylinesWin = PaylinesCounter.GetPaylinesWins(_matrix, _multiplierMatrix);
             win = paylinesWin;
             ClearMultiplierMatrixOutOfSymbolsMulties();
@@ -193,8 +193,8 @@ namespace DevilWest
             {
                 for (int j = 0; j < SlotHeight; j++)
                 {
-                    if (_matrix[j, i] != Wild)
-                        _matrix[j, i] = reelSet[i][(StopPositions[i] + j) % reelSet[i].Count];
+                   // if (_matrix[j, i] != Wild)
+                    _matrix[j, i] = reelSet[i][(StopPositions[i] + j) % reelSet[i].Count];
                 }
             }
         }

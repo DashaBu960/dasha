@@ -1,35 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using static DevilWest.Symbol;
-using static DevilWest.SlotInfo;
-using static DevilWest.SlotStats;
-using System.Linq;
-using OfficeOpenXml;
-using System.IO;
-using System.Reflection;
-using System.Windows.Media.Imaging;
-using System.Threading;
-using System.Runtime.InteropServices;
-using System.Collections.Concurrent;
-using System.Diagnostics;
+﻿using System;  // Базовые типы .NET (Random, Guid и т.д.)
+using System.Collections.Generic;  // Коллекции: Dictionary, List
+using static DevilWest.Symbol;  // Статический импорт символов (Wild, Blank, Inner...) без префикса Symbol.
+using static DevilWest.SlotInfo;  // Статический импорт настроек слота (SlotWidth, SlotHeight и т.д.)
+using static DevilWest.SlotStats;  // Статический импорт статистики (счётчики, AddWinTo и т.д.)
+using System.Linq;  // LINQ - удобные запросы к коллекциям
+using OfficeOpenXml;  // EPPlus - работа с Excel-файлами (ExcelPackage)
+using System.IO;  // Работа с файлами (FileInfo)
+using System.Reflection;  // Рефлексия (доступ к метаданным типов)
+using System.Windows.Media.Imaging;  // Типы изображений WPF (здесь, по-видимому, не используется)
+using System.Threading;  // Многопоточность: Thread, ThreadLocal, Barrier, Interlocked
+using System.Runtime.InteropServices;  // Interop (здесь, по-видимому, не используется)
+using System.Collections.Concurrent;  // Потокобезопасные коллекции
+using System.Diagnostics;  // Stopwatch - замер времени
 
-namespace DevilWest
+namespace DevilWest  // Пространство имён проекта
 {
-    class ReelSetSimulator
+    class ReelSetSimulator  // Класс симулятора одного набора барабанов (виден только внутри сборки)
     {
-        public Dictionary<int, List<Symbol>> CurrentBGReels = new Dictionary<int, List<Symbol>>();
-        public Symbol[,] Matrix = new Symbol[SlotHeight, SlotWidth];
-        public int[,] MultiplierMatrix = new int[SlotHeight, SlotWidth];
-        public ThreadLocal<Random> Rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));
-        public List<int> StopPositions = new List<int>();
-        public PaylinesCounter PaylinesCounter = new PaylinesCounter();
-        public FreeSpinsFeature FreeSpinsFeature = new FreeSpinsFeature();
-        private static Barrier _barrier1 = new Barrier(Simulation.ThreadsNumber);
-        private static Barrier _barrier2 = new Barrier(Simulation.ThreadsNumber);
-        private static int _temp = 0;
-        private static Stopwatch _stopWatchInterval = new Stopwatch();
-        public Symbol InnerSymbolAtCurrentSpin = default;
-        private static string _namesOfDoneReelSets = "";
+        public Dictionary<int, List<Symbol>> CurrentBGReels = new Dictionary<int, List<Symbol>>();  // Текущие барабаны основной игры: номер барабана -> список символов
+        public Symbol[,] Matrix = new Symbol[SlotHeight, SlotWidth];  // Игровое поле: символы по строкам и столбцам
+        public int[,] MultiplierMatrix = new int[SlotHeight, SlotWidth];  // Множители для каждой ячейки поля
+        public ThreadLocal<Random> Rand = new ThreadLocal<Random>(() => new Random(Guid.NewGuid().GetHashCode()));  // Свой Random на каждый поток; seed из Guid, чтобы потоки не повторяли числа
+        public List<int> StopPositions = new List<int>();  // Позиции остановки каждого барабана
+        public PaylinesCounter PaylinesCounter = new PaylinesCounter();  // Подсчёт выигрышей по линиям выплат
+        public FreeSpinsFeature FreeSpinsFeature = new FreeSpinsFeature();  // Бонусная игра с фриспинами
+        private static Barrier _barrier1 = new Barrier(Simulation.ThreadsNumber);  // Барьер 1: потоки ждут друг друга в этой точке (число потоков = ThreadsNumber), общий для всех экземпляров
+        private static Barrier _barrier2 = new Barrier(Simulation.ThreadsNumber);  // Барьер 2: вторая точка синхронизации потоков
+        private static int _temp = 0;  // Общий счётчик-временная переменная для всех потоков
+        private static Stopwatch _stopWatchInterval = new Stopwatch();  // Общий секундомер для замера интервалов между выводами статистики
+        public Symbol InnerSymbolAtCurrentSpin = default;  // Символ, в который превращается Inner на текущем спине
+        private static string _namesOfDoneReelSets = "";  // Имена уже просчитанных наборов барабанов (общая строка для всех потоков)
 
         public ReelSetSimulator()
         {

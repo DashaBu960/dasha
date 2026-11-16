@@ -19,7 +19,7 @@ namespace DevilWest
     class Simulation
     {
         public static int ThreadsNumber = Environment.ProcessorCount;
-        public static List<Thread> Threads = new List<Thread>();
+        public static List<Thread> Threads =  new List<Thread>();
         static void Main(string[] args)
         {
             ExcelPackage.LicenseContext = LicenseContext.Commercial;
@@ -150,7 +150,7 @@ namespace DevilWest
                             else
                             {
                                 Interlocked.Increment(ref CurrentIteration);
-                                MakeASpinWithShowingDetails();
+                                MakeASpin();// MakeASpinWithShowingDetails(); // запуск через кнопку
                             }
                         }
                     }
@@ -536,7 +536,7 @@ namespace DevilWest
             symbolsWins = PaylinesCounter.GetPaylinesWins(Matrix, MultiplierMatrix);
             if (symbolsWins < MAXWIN)
             {
-                if (scattersAmount >= 3)
+                if (scattersAmount >= 3)   // need be 3
                 {
                     symbolsWins += PayTable[Scatter][scattersAmount - 1];
                     Interlocked.Increment(ref FSTriggersCount);

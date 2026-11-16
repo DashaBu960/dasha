@@ -16,7 +16,7 @@ namespace DevilWest
 {
     static class SlotStats
     {
-        public const long IterationsCount = (long)1E9;
+        public const long IterationsCount = (long)3E7;  // стояло 1E9
         public static long CurrentIteration = 0;
         public static ConcurrentDictionary<Symbol, long[]> SymbolsHitsCount = new ConcurrentDictionary<Symbol, long[]>();
 
@@ -41,7 +41,7 @@ namespace DevilWest
         public static long WinRateOf1000x = 1;
         public static long HitRate = 1;
 
-        public static long FSTriggersCount = 1;
+        public static long FSTriggersCount = 0;   // bil 1
         public static long FSCount = 0;
 
         public static double StdDev = 0;
@@ -333,18 +333,15 @@ namespace DevilWest
 
         public static void ShowSymbolsRTPs2()
         {
-            Console.WriteLine($"Symbol\t\t2\t\t3\t\t4\t\t5");
+            Console.WriteLine($"{"Symbol",-12}{"2",-12}{"3",-12}{"4",-12}{"5",-12}");
             foreach (Symbol item in SymbolsHitsCount.Keys)
             {
-                if (item == Scatter)
-                    Console.Write($"{item}:\t");
-                else
-                    Console.Write($"{item}:\t\t");
+                Console.Write($"{item + ":",-12}");
                 double RTPfromSymbol = 0;
                 for (int i = 2; i <= SlotWidth; i++)
                 {
                     RTPfromSymbol = (double) SymbolsHitsCount[item][i - 1] / CurrentIteration * PayTable[item][i - 1] / CostToPlay * 100;
-                    Console.Write($"{Math.Round(RTPfromSymbol, 2)}%\t\t");
+                    Console.Write($"{Math.Round(RTPfromSymbol, 2) + "%",-12}");
                 }
                 Console.WriteLine();
             }
