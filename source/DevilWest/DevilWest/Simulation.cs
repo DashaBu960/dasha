@@ -150,7 +150,7 @@ namespace DevilWest
                             else
                             {
                                 Interlocked.Increment(ref CurrentIteration);
-                                MakeASpin();// MakeASpinWithShowingDetails(); // запуск через кнопку
+                                MakeASpin(); //MakeASpinWithShowingDetails(); // запуск через кнопку  // запуск всего
                             }
                         }
                     }

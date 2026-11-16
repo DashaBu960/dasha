@@ -34,6 +34,7 @@ namespace DevilWest
         public static Dictionary<int, int> WildsMultipliersOfBG = new Dictionary<int, int>();
         public static Dictionary<int, int> WildsMultipliersOfFS = new Dictionary<int, int>();
         public static Dictionary<int, int> ChosenSymbolsMultipliers = new Dictionary<int, int>();
+        public static Dictionary<int, int> FSMultipliersTable = new Dictionary<int, int>(); // таблица множителей фриспинов: множитель -> вес (лист "FS Multipliers")
         public static Dictionary<Dictionary<int, List<Symbol>>, int> FSReelsWeights = new Dictionary<Dictionary<int, List<Symbol>>, int>();
         public static Dictionary<Dictionary<int, List<Symbol>>, int> BGReelsWeights = new Dictionary<Dictionary<int, List<Symbol>>, int>();
         public static Dictionary<Dictionary<int, List<Symbol>>, Dictionary<Symbol, int>> InnerReelSetsBG = new Dictionary<Dictionary<int, List<Symbol>>, Dictionary<Symbol, int>>();
@@ -67,6 +68,7 @@ namespace DevilWest
                         ImportInnerSymbolsOfReelSetFS(workbook.Worksheets[$"Free Spins Reels {i + 1}"], FSReelsSets[i]);
                     }
                     ImportSymbolsMultipliers(workbook.Worksheets[$"Symbols Multipliers"]);
+                    ImportFSMultipliers(workbook.Worksheets["FS Multipliers"]); // читаем лист с множителями фриспинов
                     ImportFSAmountsTable(workbook.Worksheets["Free Spins Amounts Table"]);
                     ImportWeightsToChooseActivatedSymbol(workbook.Worksheets["Weights of Choosing Symbol"]);
                     ImportReelsFromSheetTo(workbook.Worksheets["Reel Set Of Buy Feature"], ReelSetOfBuyFeature);
@@ -75,6 +77,16 @@ namespace DevilWest
                 {
                     package.Dispose();
                 }
+            }
+        }
+
+        // Читает лист "FS Multipliers": колонка B - множитель, колонка C - вес, данные с 3-й строки до первой пустой ячейки в B.
+        // Результат кладётся в словарь FSMultipliersTable.
+        private static void ImportFSMultipliers(ExcelWorksheet worksheet)
+        {
+            for (int i = 3; worksheet.Cells[$"B{i}"].Value != null; i++)
+            {
+                FSMultipliersTable.Add(Convert.ToInt32(worksheet.Cells[$"B{i}"].Value), Convert.ToInt32(worksheet.Cells[$"C{i}"].Value));
             }
         }
 

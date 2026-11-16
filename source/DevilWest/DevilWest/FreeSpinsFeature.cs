@@ -120,7 +120,10 @@ namespace DevilWest
             RealizeInnerSymbols();
           //  RealizeMultiplierMatrix();
             int paylinesWin = PaylinesCounter.GetPaylinesWins(_matrix, _multiplierMatrix);
-            win = paylinesWin;
+            // выбираем множитель этого фриспина по весам из таблицы FSMultipliersTable (лист "FS Multipliers")
+            int fsMultiplier = TableWeightsSelector.GetRandomObjectFromTableWithWeights(FSMultipliersTable, Rand);
+            // итоговый выигрыш спина = выигрыш по линиям * множитель фриспина
+            win = paylinesWin * fsMultiplier;
             ClearMultiplierMatrixOutOfSymbolsMulties();
         }
 
@@ -138,8 +141,12 @@ namespace DevilWest
             {
                 ShowMultiplierMatrix();
             }
+            // выбираем множитель этого фриспина по весам из таблицы FSMultipliersTable (лист "FS Multipliers")
+            int fsMultiplier = TableWeightsSelector.GetRandomObjectFromTableWithWeights(FSMultipliersTable, Rand);
+            Console.WriteLine($"FS multiplier = {fsMultiplier}"); // показываем множитель в отладочном режиме
             Console.ReadKey();
-            win = paylinesWin;
+            // итоговый выигрыш спина = выигрыш по линиям * множитель фриспина
+            win = paylinesWin * fsMultiplier;
             ClearMultiplierMatrixOutOfSymbolsMulties();
         }
 
